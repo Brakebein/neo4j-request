@@ -1,0 +1,23 @@
+{
+  "name": "neo4j-request",
+  "version": "1.0.0",
+  "description": "Simplified interface of neo4j-driver",
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brakebein/neo4j-request.git"
+  },
+  "author": "Brakbein",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Brakebein/neo4j-request/issues"
+  },
+  "homepage": "https://github.com/Brakebein/neo4j-request#readme",
+  "dependencies": {
+    "neo4j-driver": "^4.0.2"
+  }
+}
