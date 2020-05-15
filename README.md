@@ -62,3 +62,9 @@ try {
 //   }
 // ]
 ```
+
+## Test
+
+Copy `test/config-sample.js` to `test/config.js` and change the values according to the settings of your Neo4j instance. Then, run test command:
+
+    npm test

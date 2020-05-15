@@ -7,6 +7,8 @@ let config = {};
  */
 let driver;
 
+let multiDBSupport = false;
+
 /**
  * Initialize Neo4j driver instance.
  * @param url {string}
@@ -15,7 +17,7 @@ let driver;
  * @param database {string=} Database, default: 'neo4j'
  * @param options {Config=} neo4j-driver config options
  */
-function init(url, user, password, database = 'neo4j', options = {}) {
+async function init(url, user, password, database = 'neo4j', options = {}) {
 
   config.url = url;
   config.auth = neo4j.auth.basic(user, password);
@@ -24,17 +26,30 @@ function init(url, user, password, database = 'neo4j', options = {}) {
 
   driver = neo4j.driver(url, config.auth, config.options);
 
-  driver.verifyConnectivity()
-    .then(serverInfo => {
-      console.log('Neo4j Server:', serverInfo);
-    })
-    .catch(reason => {
-      console.error('Neo4j driver instantiation failed', reason);
-    });
-
   process.on('exit', async () => {
     await driver.close();
   });
+
+  try {
+
+    const serverInfo = await driver.verifyConnectivity();
+
+    console.log('Neo4j Server:', serverInfo);
+
+    // check version
+    const matches = /^Neo4j\/(\d+).\d+.\d+/.exec(serverInfo.version);
+    if (+matches[1] > 3) {
+      multiDBSupport = true;
+    }
+
+    return serverInfo;
+
+  } catch (reason) {
+
+    console.error('Neo4j driver instantiation failed', reason);
+    return Promise.reject(reason);
+
+  }
 
 }
 
@@ -51,7 +66,7 @@ async function readTransaction(query, params = {}) {
   }
 
   const session = driver.session({
-    database: config.database,
+    database: multiDBSupport ? config.database : null,
     defaultAccessMode: neo4j.session.READ
   });
 
@@ -85,7 +100,7 @@ async function writeTransaction(query, params = {}) {
   }
 
   const session = driver.session({
-    database: config.database
+    database: multiDBSupport ? config.database: null
   });
 
   try {
@@ -117,7 +132,7 @@ async function multipleStatements(statements) {
   }
 
   const session = driver.session({
-    database: config.database
+    database: multiDBSupport ? config.database : null
   });
 
   const txc = session.beginTransaction();
@@ -183,6 +198,10 @@ function convertValues(value) {
       return value.toString();
     }
   }
+
+  // if (value instanceof neo4j.Date) {
+  //   return value.toString();
+  // }
 
   // neo4j Node object
   if (value instanceof neo4j.types.Node) {
