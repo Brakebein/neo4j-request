@@ -54,6 +54,16 @@ async function init(url, user, password, database = 'neo4j', options = {}) {
 }
 
 /**
+ * Get driver instance.
+ * @return {Driver}
+ */
+function getDriver() {
+
+  return driver;
+
+}
+
+/**
  * READ transaction without modifying database.
  * @param query {string}
  * @param params {Object=}
@@ -199,9 +209,14 @@ function convertValues(value) {
     }
   }
 
-  // if (value instanceof neo4j.Date) {
-  //   return value.toString();
-  // }
+  if (neo4j.isDate(value) ||
+    neo4j.isDateTime(value) ||
+    neo4j.isLocalTime(value) ||
+    neo4j.isLocalDateTime(value) ||
+    neo4j.isTime(value) ||
+    neo4j.isDuration(value)) {
+    return value.toString();
+  }
 
   // neo4j Node object
   if (value instanceof neo4j.types.Node) {
@@ -261,6 +276,7 @@ function removeEmptyArrays(data, arrayKey, checkKey) {
 
 module.exports = {
   init,
+  getDriver,
   readTransaction,
   writeTransaction,
   multipleStatements,

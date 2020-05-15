@@ -13,7 +13,7 @@ async function main() {
     console.log('Indexes:', results1);
 
     const results2 = await neo4j.readTransaction(`MATCH (n) RETURN n AS node LIMIT 3`)
-    console.log('Node:', results2);
+    console.log('Nodes:', results2);
 
     console.log('No Errors.')
     process.exit();
