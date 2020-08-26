@@ -16,6 +16,7 @@ let multiDBSupport = false;
  * @param password {string}
  * @param database {string=} Database, default: 'neo4j'
  * @param options {Config=} neo4j-driver config options
+ * @return {Promise<ServerInfo>}
  */
 async function init(url, user, password, database = 'neo4j', options = {}) {
 
@@ -24,15 +25,9 @@ async function init(url, user, password, database = 'neo4j', options = {}) {
   config.database = database;
   config.options = Object.assign({disableLosslessIntegers: true}, options);
 
-  driver = neo4j.driver(url, config.auth, config.options);
-
-  process.on('exit', async () => {
-    await driver.close();
-  });
-
   try {
 
-    const serverInfo = await driver.verifyConnectivity();
+    const serverInfo = await connect(5);
 
     console.log('Neo4j Server:', serverInfo);
 
@@ -42,12 +37,57 @@ async function init(url, user, password, database = 'neo4j', options = {}) {
       multiDBSupport = true;
     }
 
+    process.on('exit', async () => {
+      await driver.close();
+    });
+
     return serverInfo;
 
   } catch (reason) {
 
-    console.error('Neo4j driver instantiation failed', reason);
     return Promise.reject(reason);
+
+  }
+
+}
+
+/**
+ * Connection routine. Retry a few times if connection failed (e.g. on server/database startup).
+ * @param numberOfTrials {number} Number of connection trials every 5 seconds before returning an error.
+ * @return {Promise<ServerInfo>}
+ */
+async function connect(numberOfTrials) {
+
+  driver = neo4j.driver(config.url, config.auth, config.options);
+
+  try {
+
+    return await driver.verifyConnectivity();
+
+  } catch (reason) {
+
+    if (numberOfTrials > 0) {
+
+      console.warn('Neo4j driver instantiation failed. Retry in 5 seconds...');
+
+      return new Promise(((resolve, reject) => {
+        setTimeout(() => {
+          connect(numberOfTrials - 1)
+            .then(value => {
+              resolve(value);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        }, 5000);
+      }));
+
+    } else {
+
+      console.error('Neo4j driver instantiation failed!');
+      return Promise.reject(reason);
+
+    }
 
   }
 
@@ -83,7 +123,7 @@ async function readTransaction(query, params = {}) {
   try {
 
     const result = await session.readTransaction(tx => tx.run(query, params));
-    return extractBoltRecords(result.records);
+    return extractRecords(result.records);
 
   } catch (e) {
 
@@ -116,7 +156,7 @@ async function writeTransaction(query, params = {}) {
   try {
 
     const result = await session.writeTransaction(tx => tx.run(query, params));
-    return extractBoltRecords(result.records);
+    return extractRecords(result.records);
 
   } catch (e) {
 
@@ -153,7 +193,7 @@ async function multipleStatements(statements) {
 
     for (const s of statements) {
       const result = await txc.run(s.statement, s.parameters);
-      results.push(extractBoltRecords(result.records));
+      results.push(extractRecords(result.records));
     }
 
     await txc.commit();
@@ -178,7 +218,7 @@ async function multipleStatements(statements) {
  * @param data {Record[]}
  * @return {Object[]}
  */
-function extractBoltRecords(data) {
+function extractRecords(data) {
 
   if (!data) {
     return [];
@@ -280,6 +320,6 @@ module.exports = {
   readTransaction,
   writeTransaction,
   multipleStatements,
-  extractBoltRecords,
+  extractRecords,
   removeEmptyArrays
 };
