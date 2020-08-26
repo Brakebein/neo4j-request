@@ -240,6 +240,28 @@ function extractRecords(data) {
 
 function convertValues(value) {
 
+  if (value === null) {
+    return value;
+  }
+
+  // neo4j Node object
+  if (value instanceof neo4j.types.Node) {
+    value = value.properties;
+  }
+
+  // recursive array
+  if (Array.isArray(value)) {
+    return value.map(v => convertValues(v));
+  }
+
+  // recursive object
+  if (typeof value === 'object') {
+    for (const key of Object.keys(value)) {
+      value[key] = convertValues(value[key]);
+    }
+    return value;
+  }
+
   // neo4j integers
   if (neo4j.isInt(value)) {
     if (neo4j.integer.inSafeRange(value)) {
@@ -249,29 +271,15 @@ function convertValues(value) {
     }
   }
 
+  // neo4j date, time, etc.
   if (neo4j.isDate(value) ||
     neo4j.isDateTime(value) ||
     neo4j.isLocalTime(value) ||
     neo4j.isLocalDateTime(value) ||
     neo4j.isTime(value) ||
-    neo4j.isDuration(value)) {
+    neo4j.isDuration(value) ||
+    neo4j.isPoint(value)) {
     return value.toString();
-  }
-
-  // neo4j Node object
-  if (value instanceof neo4j.types.Node) {
-    value = value.properties;
-  }
-
-  // recursive
-  if (Array.isArray(value)) {
-    return value.map(v => convertValues(v));
-  }
-
-  if (typeof value === 'object' && value !== null) {
-    for (const key of Object.keys(value)) {
-      value[key] = convertValues(value[key]);
-    }
   }
 
   return value;
