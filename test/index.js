@@ -9,13 +9,13 @@ async function main() {
 
     await neo4j.init(config.url, config.user, config.password, config.database);
 
-    const results1 = await neo4j.readTransaction(`CALL db.indexes()`)
+    const results1 = await neo4j.readTransaction(`CALL db.indexes()`);
     console.log('Indexes:', results1);
 
-    const results2 = await neo4j.readTransaction(`MATCH (n) RETURN n AS node LIMIT 3`)
+    const results2 = await neo4j.readTransaction(`MATCH (n) RETURN n AS node LIMIT 3`);
     console.log('Nodes:', results2);
 
-    console.log('No Errors.')
+    console.log('No Errors.');
     process.exit();
 
   } catch (err) {

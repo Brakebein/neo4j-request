@@ -172,7 +172,7 @@ async function writeTransaction(query, params = {}) {
 
 /**
  * Call multiple statements in one transaction.
- * @param statements {Array<{statement: string, parameters: Object<key, *>}>}
+ * @param statements {Array<{statement: string, parameters: Object<key, any>}>}
  * @return {Promise<Object[][]>}
  */
 async function multipleStatements(statements) {
@@ -281,7 +281,10 @@ function convertValues(value) {
 /**
  * Look for empty arrays returned by Neo4j and clean them, if there is `null` inside.
  *
- * Sometimes, if the cypher query contains `OPTIONAL MATCH node` in combination with  `collect({key: node.value}) AS values`, the resulting array may be filled with one object with `null` values: `[{key: null}]`. This method reduces the array to `[]` by calling `removeEmptyArrays(data, 'values', 'key')`.
+ * Sometimes, if the cypher query contains `OPTIONAL MATCH node` in combination with
+ * `collect({key: node.value}) AS values`, the resulting array may be filled with one
+ * object with `null` values: `[{key: null}]`. This method reduces the array to `[]`
+ * by calling `removeEmptyArrays(data, 'values', 'key')`.
  *
  * @param data {*[]}
  * @param arrayKey {string} Property key of the array to check
