@@ -106,7 +106,7 @@ function getDriver() {
 /**
  * READ transaction without modifying database.
  * @param query {string}
- * @param params {Object=}
+ * @param params {Object<string, any>=}
  * @return {Promise<Object[]>}
  */
 async function readTransaction(query, params = {}) {
@@ -140,7 +140,7 @@ async function readTransaction(query, params = {}) {
 /**
  * WRITE transaction that modifies database.
  * @param query {string}
- * @param params {Object=}
+ * @param params {Object<string, any>=}
  * @return {Promise<Object[]>}
  */
 async function writeTransaction(query, params = {}) {
@@ -172,7 +172,7 @@ async function writeTransaction(query, params = {}) {
 
 /**
  * Call multiple statements in one transaction.
- * @param statements {Array<{statement: string, parameters: Object<key, any>}>}
+ * @param statements {Array<{statement: string, parameters: Object<string, any>}>}
  * @return {Promise<Object[][]>}
  */
 async function multipleStatements(statements) {
@@ -294,10 +294,10 @@ function convertValues(value) {
  * object with `null` values: `[{key: null}]`. This method reduces the array to `[]`
  * by calling `removeEmptyArrays(data, 'values', 'key')`.
  *
- * @param data {*[]}
+ * @param data {any[]}
  * @param arrayKey {string} Property key of the array to check
  * @param checkKey {string} Property key of first array element to check against `null`
- * @return {*[]}
+ * @return {any[]}
  */
 function removeEmptyArrays(data, arrayKey, checkKey) {
 

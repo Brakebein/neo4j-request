@@ -54,7 +54,7 @@ A very simple read transaction that expects a cypher statement and (optionally) 
 |Param|Details|
 |---|---|
 |`query`|_Type:_ `string`|
-|`params` <br> _(optional)_|_Type:_ `Object`|
+|`params` <br> _(optional)_|_Type:_ `Object<string, any>`|
 
 Returns `Promise<Object[]>`: an array of objects, where the object's property names correlate with identifiers within the `RETURN` clause.
 
@@ -104,7 +104,7 @@ A fail of one statement will lead to the rollback of the whole transaction.
 
 |Param|Details|
 |---|---|
-|`statements`|_Type:_ `Array<{statement: string, parameters: Object<key, any>}>`|
+|`statements`|_Type:_ `Array<{statement: string, parameters: Object<string, any>}>`|
 
 Returns `Promise<Object[][]>`: an array of arrays similar to `readTransaction`.
 
