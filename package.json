@@ -12,12 +12,12 @@
     "url": "git+https://github.com/Brakebein/neo4j-request.git"
   },
   "author": "Brakbein",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Brakebein/neo4j-request/issues"
   },
   "homepage": "https://github.com/Brakebein/neo4j-request#readme",
   "dependencies": {
-    "neo4j-driver": "^4.0.2"
+    "neo4j-driver": "^4.1.1"
   }
 }
