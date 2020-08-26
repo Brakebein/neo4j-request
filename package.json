@@ -1,6 +1,6 @@
 {
   "name": "neo4j-request",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Wrapper for neo4j-driver to simplify requests",
   "main": "index.js",
   "module": "index.js",
