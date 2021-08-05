@@ -1,6 +1,6 @@
 {
   "name": "neo4j-request",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Wrapper for neo4j-driver to simplify requests",
   "keywords": [
     "neo4j",

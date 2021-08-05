@@ -138,6 +138,19 @@ Get the driver instance to access full API of [neo4j-driver](https://github.com/
 const driver = neo4j.getDriver();
 ```
 
+### session
+
+Acquire a session to execute, e.g., [explicit transactions](https://github.com/neo4j/neo4j-javascript-driver#explicit-transactions).
+
+```javascript
+const session = neo4j.session();
+const txc = session.beginTransaction();
+
+// ...
+
+await session.close();
+```
+
 ### extractRecords
 
 Used internally to extract and convert the returned records by neo4j-driver to a more simplified format.

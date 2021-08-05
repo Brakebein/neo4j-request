@@ -124,7 +124,7 @@ function getDriver(): Driver {
 }
 
 /**
- * Open session.
+ * Acquire a session.
  */
 function session(): Session {
 

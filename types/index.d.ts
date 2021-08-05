@@ -16,7 +16,7 @@ declare function init(url: string, user: string, password: string, database?: st
  */
 declare function getDriver(): Driver;
 /**
- * Open session.
+ * Acquire a session.
  */
 declare function session(): Session;
 /**
