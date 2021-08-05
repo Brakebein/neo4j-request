@@ -10,7 +10,7 @@
   ],
   "main": "dist/build.js",
   "module": "dist/build.module.js",
-  "types": "types/index.d.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "build": "npx rollup -c && npx tsc -d --emitDeclarationOnly --declarationDir types --removeComments false",
     "test": "node test"

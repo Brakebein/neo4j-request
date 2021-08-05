@@ -1,5 +1,5 @@
 import { Config, Driver, Record, ServerInfo } from 'neo4j-driver';
-interface IGenericObject {
+interface IParams {
     [key: string]: any;
 }
 /**
@@ -18,22 +18,22 @@ declare function getDriver(): Driver;
 /**
  * READ transaction without modifying database.
  */
-declare function readTransaction<T = IGenericObject>(query: string, params?: IGenericObject): Promise<T[]>;
+declare function readTransaction<T>(query: string, params?: IParams): Promise<T[]>;
 /**
  * WRITE transaction that modifies database.
  */
-declare function writeTransaction<T = IGenericObject>(query: string, params?: IGenericObject): Promise<T[]>;
+declare function writeTransaction<T>(query: string, params?: IParams): Promise<T[]>;
 /**
  * Call multiple statements in one transaction.
  */
-declare function multipleStatements<T = IGenericObject>(statements: {
+declare function multipleStatements<T>(statements: {
     statement: string;
-    parameters: IGenericObject;
+    parameters: IParams;
 }[]): Promise<T[][]>;
 /**
  * Extract and convert records returned by neo4j-driver.
  */
-declare function extractRecords<T = IGenericObject>(data: Record[]): T[];
+declare function extractRecords<T>(data: Record[]): T[];
 /**
  * Look for empty arrays returned by Neo4j and clean them, if there is `null` inside.
  *
@@ -46,5 +46,5 @@ declare function extractRecords<T = IGenericObject>(data: Record[]): T[];
  * @param arrayKey Property key of the array to check
  * @param checkKey Property key of first array element to check against `null`
  */
-declare function removeEmptyArrays<T = IGenericObject>(data: T[], arrayKey: string, checkKey: string): T[];
+declare function removeEmptyArrays<T>(data: T[], arrayKey: string, checkKey: string): T[];
 export { init, getDriver, readTransaction, writeTransaction, multipleStatements, extractRecords, removeEmptyArrays };

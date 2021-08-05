@@ -1,7 +1,7 @@
 import * as neo4j from 'neo4j-driver';
 import { AuthToken, Config, Driver, Record, ServerInfo } from 'neo4j-driver';
 
-interface IGenericObject {
+interface IParams {
   [key: string]: any;
 }
 
@@ -126,7 +126,7 @@ function getDriver(): Driver {
 /**
  * READ transaction without modifying database.
  */
-async function readTransaction<T = IGenericObject>(query: string, params: IGenericObject = {}): Promise<T[]> {
+async function readTransaction<T>(query: string, params: IParams = {}): Promise<T[]> {
 
   if (!driver) {
 
@@ -143,7 +143,7 @@ async function readTransaction<T = IGenericObject>(query: string, params: IGener
 
     const result = await session.readTransaction(tx => tx.run(query, params));
 
-    return extractRecords(result.records);
+    return extractRecords<T>(result.records);
 
   } catch (e) {
 
@@ -160,7 +160,7 @@ async function readTransaction<T = IGenericObject>(query: string, params: IGener
 /**
  * WRITE transaction that modifies database.
  */
-async function writeTransaction<T = IGenericObject>(query: string, params: IGenericObject = {}): Promise<T[]> {
+async function writeTransaction<T >(query: string, params: IParams = {}): Promise<T[]> {
 
   if (!driver) {
 
@@ -176,7 +176,7 @@ async function writeTransaction<T = IGenericObject>(query: string, params: IGene
 
     const result = await session.writeTransaction(tx => tx.run(query, params));
 
-    return extractRecords(result.records);
+    return extractRecords<T>(result.records);
 
   } catch (e) {
 
@@ -193,7 +193,7 @@ async function writeTransaction<T = IGenericObject>(query: string, params: IGene
 /**
  * Call multiple statements in one transaction.
  */
-async function multipleStatements<T = IGenericObject>(statements: {statement: string, parameters: IGenericObject}[]): Promise<T[][]> {
+async function multipleStatements<T>(statements: {statement: string, parameters: IParams}[]): Promise<T[][]> {
 
   if (!driver) {
 
@@ -215,7 +215,7 @@ async function multipleStatements<T = IGenericObject>(statements: {statement: st
 
       const result = await txc.run(s.statement, s.parameters);
 
-      results.push(extractRecords(result.records));
+      results.push(extractRecords<T>(result.records));
 
     }
 
@@ -240,7 +240,7 @@ async function multipleStatements<T = IGenericObject>(statements: {statement: st
 /**
  * Extract and convert records returned by neo4j-driver.
  */
-function extractRecords<T = IGenericObject>(data: Record[]): T[] {
+function extractRecords<T>(data: Record[]): T[] {
 
   if (!data) {
 
@@ -349,7 +349,7 @@ function convertValues(value) {
  * @param arrayKey Property key of the array to check
  * @param checkKey Property key of first array element to check against `null`
  */
-function removeEmptyArrays<T = IGenericObject>(data: T[], arrayKey: string, checkKey: string): T[] {
+function removeEmptyArrays<T>(data: T[], arrayKey: string, checkKey: string): T[] {
 
   for (let i = 0, l = data.length; i < l; i++) {
 
