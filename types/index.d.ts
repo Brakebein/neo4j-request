@@ -1,4 +1,4 @@
-import { Config, Driver, Record, ServerInfo } from 'neo4j-driver';
+import { Config, Driver, Record, ServerInfo, Session } from 'neo4j-driver';
 interface IParams {
     [key: string]: any;
 }
@@ -15,6 +15,10 @@ declare function init(url: string, user: string, password: string, database?: st
  * Get driver instance.
  */
 declare function getDriver(): Driver;
+/**
+ * Open session.
+ */
+declare function session(): Session;
 /**
  * READ transaction without modifying database.
  */
@@ -47,4 +51,4 @@ declare function extractRecords<T>(data: Record[]): T[];
  * @param checkKey Property key of first array element to check against `null`
  */
 declare function removeEmptyArrays<T>(data: T[], arrayKey: string, checkKey: string): T[];
-export { init, getDriver, readTransaction, writeTransaction, multipleStatements, extractRecords, removeEmptyArrays };
+export { init, getDriver, session, readTransaction, writeTransaction, multipleStatements, extractRecords, removeEmptyArrays };

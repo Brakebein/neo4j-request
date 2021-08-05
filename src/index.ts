@@ -1,5 +1,5 @@
 import * as neo4j from 'neo4j-driver';
-import { AuthToken, Config, Driver, Record, ServerInfo } from 'neo4j-driver';
+import { AuthToken, Config, Driver, Record, ServerInfo, Session } from 'neo4j-driver';
 
 interface IParams {
   [key: string]: any;
@@ -124,6 +124,17 @@ function getDriver(): Driver {
 }
 
 /**
+ * Open session.
+ */
+function session(): Session {
+
+  return driver.session({
+    database: multiDBSupport ? config.database : null
+  });
+
+}
+
+/**
  * READ transaction without modifying database.
  */
 async function readTransaction<T>(query: string, params: IParams = {}): Promise<T[]> {
@@ -160,7 +171,7 @@ async function readTransaction<T>(query: string, params: IParams = {}): Promise<
 /**
  * WRITE transaction that modifies database.
  */
-async function writeTransaction<T >(query: string, params: IParams = {}): Promise<T[]> {
+async function writeTransaction<T>(query: string, params: IParams = {}): Promise<T[]> {
 
   if (!driver) {
 
@@ -382,6 +393,7 @@ function removeEmptyArrays<T>(data: T[], arrayKey: string, checkKey: string): T[
 export {
   init,
   getDriver,
+  session,
   readTransaction,
   writeTransaction,
   multipleStatements,

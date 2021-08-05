@@ -55,6 +55,11 @@ async function connect(numberOfTrials) {
 function getDriver() {
     return driver;
 }
+function session() {
+    return driver.session({
+        database: multiDBSupport ? config.database : null
+    });
+}
 async function readTransaction(query, params = {}) {
     if (!driver) {
         return Promise.reject('Neo4j driver not initialized!');
@@ -183,4 +188,4 @@ function removeEmptyArrays(data, arrayKey, checkKey) {
     return data;
 }
 
-export { extractRecords, getDriver, init, multipleStatements, readTransaction, removeEmptyArrays, writeTransaction };
+export { extractRecords, getDriver, init, multipleStatements, readTransaction, removeEmptyArrays, session, writeTransaction };
